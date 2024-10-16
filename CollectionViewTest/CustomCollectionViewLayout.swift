@@ -22,22 +22,22 @@ final class CustomCollectionViewLayout: UICollectionViewFlowLayout {
     override func prepare() {
         cellAttributes = [:]
         
-        guard let collectionView, let data = (collectionView.dataSource as? ViewController)?.data else { return }
+        guard let collectionView, let dataSource = (collectionView.dataSource as? ViewController) else { return }
         
-        contentSize.height = Double(collectionView.numberOfSections) * CustomCollectionViewLayout.cellHeight
+        contentSize = dataSource.contentSize
         
         for section in 0..<collectionView.numberOfSections {
             let yPosition = Double(section) * CustomCollectionViewLayout.cellHeight
-            var xPosition = 0.0
             for item in 0..<collectionView.numberOfItems(inSection: section) {
+                let itemData = dataSource.cachedData[section][item]
                 let cellIndexPath = IndexPath(item: item, section: section)
-                let cellWidth = data[section][item]
                 let currentCellAttributes = UICollectionViewLayoutAttributes(forCellWith: cellIndexPath)
-                currentCellAttributes.frame = CGRect(x: xPosition, y: yPosition, width: cellWidth, height: CustomCollectionViewLayout.cellHeight)
+                currentCellAttributes.frame = CGRect(x: itemData.lowerBound,
+                                                     y: yPosition,
+                                                     width: itemData.upperBound - itemData.lowerBound,
+                                                     height: CustomCollectionViewLayout.cellHeight)
                 cellAttributes[cellIndexPath] = currentCellAttributes
-                xPosition += cellWidth
             }
-            contentSize.width = max(contentSize.width, xPosition)
         }
     }
     

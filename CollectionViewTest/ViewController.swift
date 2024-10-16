@@ -11,30 +11,58 @@ class ViewController: UIViewController {
     @IBOutlet private var collectionView: UICollectionView!
     
     let sectionCount = 20
+    let itemCount = 200
     
-    var data: [[Double]] = []
+    var storedData = [[ClosedRange<Double>]]()
+    var cachedData = [[ClosedRange<Double>]]()
+    var contentSize = CGSize.zero
     
     var focusedIndexPath: IndexPath?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        for _ in 0..<sectionCount {
-            data.append([])
-        }
-        generateData()
+        generateStoredData()
+        initCachedData()
+        collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .centeredHorizontally, animated: false)
     }
     
-    private func generateData() {
+    private func generateStoredData() {
+        contentSize.height = Double(sectionCount) * CustomCollectionViewLayout.cellHeight
+        for _ in 0..<sectionCount {
+            var sectionData = [ClosedRange<Double>]()
+            var sectionLength = 0.0
+            for _ in 0..<itemCount {
+                let newItemLength = Double.random(in: 100...1000)
+                sectionData.append(sectionLength...(sectionLength + newItemLength))
+                sectionLength += newItemLength
+            }
+            storedData.append(sectionData)
+            contentSize.width = max(contentSize.width, sectionLength)
+        }
+    }
+    
+    private func initCachedData() {
+        for sectionData in storedData {
+            cachedData.append([sectionData[itemCount / 2]])
+        }
+    }
+    
+    private func updateCachedData() {
+        let activeRect = CGRect(origin: collectionView.contentOffset, size: collectionView.frame.size).insetBy(dx: -collectionView.frame.width / 2, dy: 0.0)
         collectionView.performBatchUpdates { [weak self] in
             guard let self else { return }
+            
             for section in 0..<sectionCount {
-                var sectionLength = data[section].reduce(0, +)
-                while sectionLength < collectionView.contentOffset.x + 1.5 * collectionView.frame.width {
-                    let newValue = Double.random(in: 100...1000)
-                    collectionView.insertItems(at: [IndexPath(item: data[section].count, section: section)])
-                    data[section].append(newValue)
-                    sectionLength += newValue
+                for itemData in storedData[section] {
+                    let itemRect = CGRect(x: itemData.lowerBound,
+                                          y: Double(section) * CustomCollectionViewLayout.cellHeight,
+                                          width: itemData.upperBound - itemData.lowerBound,
+                                          height: CustomCollectionViewLayout.cellHeight)
+                    if itemRect.intersects(activeRect) && !cachedData[section].contains(itemData) {
+                        collectionView.insertItems(at: [IndexPath(item: cachedData[section].count, section: section)])
+                        cachedData[section].append(itemData)
+                    }
                 }
             }
         }
@@ -66,20 +94,20 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if !scrollView.isDecelerating {
-            generateData()
+            updateCachedData()
         }
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        generateData()
+        updateCachedData()
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        data.count
+        cachedData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        data[section].count
+        cachedData[section].count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
