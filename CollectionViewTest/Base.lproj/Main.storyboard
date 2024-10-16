@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="32700.99.1234" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="appleTV" appearance="light"/>
     <dependencies>
+        <deployment identifier="tvOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
@@ -21,7 +22,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="NLj-wM-XTI">
-                                <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                                <rect key="frame" x="500" y="0.0" width="1420" height="1080"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewLayout key="collectionViewLayout" id="yX1-xa-XMh" customClass="CustomCollectionViewLayout" customModule="CollectionViewTest" customModuleProvider="target"/>
                                 <cells>
@@ -39,13 +40,23 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="boq-we-XgN"/>
                                 </connections>
                             </collectionView>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7dX-5p-f4Q">
+                                <rect key="frame" x="0.0" y="0.0" width="500" height="1080"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="500" id="Y65-sZ-Yas"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="wu6-TO-1qx"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="7dX-5p-f4Q" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="5Kh-0d-CuX"/>
+                            <constraint firstItem="NLj-wM-XTI" firstAttribute="leading" secondItem="7dX-5p-f4Q" secondAttribute="trailing" id="GXY-ey-deB"/>
                             <constraint firstItem="NLj-wM-XTI" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="ZQK-Og-jiy"/>
                             <constraint firstAttribute="trailing" secondItem="NLj-wM-XTI" secondAttribute="trailing" id="fJP-mg-Bog"/>
-                            <constraint firstItem="NLj-wM-XTI" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="tgq-Vy-fUP"/>
+                            <constraint firstAttribute="bottom" secondItem="7dX-5p-f4Q" secondAttribute="bottom" id="t8Z-04-GIB"/>
+                            <constraint firstItem="7dX-5p-f4Q" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="wlj-MS-Tis"/>
                             <constraint firstAttribute="bottom" secondItem="NLj-wM-XTI" secondAttribute="bottom" id="ya9-ZP-5Ov"/>
                         </constraints>
                     </view>
